@@ -3,15 +3,23 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
-
 const cors = require("cors");
 require("dotenv").config();
 const express = require("express");
 const app = express();
 const fetch = require("node-fetch");
 
+express.urlencoded({ extended: false });
 app.use(express.json());
 app.use(cors());
+
+app.use(function (req, res, next) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  next();
+});
 
 //AI Chat
 
@@ -128,11 +136,11 @@ app.post("/img", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "content-type": "application/json",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          prompt: "A cute baby sea otter",
+          prompt: prompt,
           n: 1,
           size: "1024x1024",
         }),
